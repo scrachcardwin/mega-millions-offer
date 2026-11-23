@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="bn" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>অফিশিয়াল মেগা মিলিয়নস প্যাকেজ | লিমিটেড টাইম অফার</title>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script> src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script> src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background-color: #040714; color: #f8fafc; font-family: 'Hind Siliguri', 'Inter', sans-serif; }
+    .mobile-shell { max-width: 480px; margin: 0 auto; min-height: 100vh; background: linear-gradient(180deg, #070c22 0%, #040714 100%); }
+    .glass-panel { background: rgba(17, 27, 66, 0.72); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.1); }
+    .pkg-card { border: 2px solid rgba(255,255,255,0.09); background: rgba(12, 19, 48, 0.85); transition: all 0.2s ease; }
+    .pkg-card.selected { border-color: #facc15; box-shadow: 0 0 24px rgba(250,204,21,0.22); }
+  </style>
+</head>
+<body>
+  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 hidden px-4 py-2.5 rounded-2xl bg-emerald-950 border border-emerald-400 text-emerald-200 text-xs font-bold shadow-xl"></div>
+  <div id="storefront" class="mobile-shell pb-28">
+    <header class="sticky top-0 z-30 glass-panel px-4 py-3 flex items-center justify-between border-b border-white/10">
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center font-extrabold"><i class="fa-solid fa-crown"></i></div>
+        <div><span class="font-extrabold text-sm block">মেগা মিলিয়নস</span><span class="text-[11px] text-amber-400">অফিশিয়াল অফার কার্ড</span></div>
+      </div>
+      <span class="text-[11px] px-3 py-1 rounded-full bg-amber-400/15 border border-amber-400/35 text-amber-300 font-bold">১ ডলার = ১২৬.২১ ৳</span>
+    </header>
+    <section class="p-4 text-center">
+      <span class="inline-block px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 text-[11px] font-extrabold tracking-wider mb-2">LIMITED TIME OFFER</span>
+      <h1 class="text-2xl font-extrabold text-amber-300">অফিশিয়াল মেগা মিলিয়নস প্যাকেজ</h1>
+      <p class="text-xs text-slate-300 mt-1">চেকবক্সে টিক দিন অথবা + / - দিয়ে পরিমাণ বেছে নিয়ে বাই করুন</p>
+    </section>
+    <section class="px-4 space-y-3" id="pkg-list"></section>
+    <section id="checkout-box" class="hidden px-4 pt-4">
+      <div class="glass-panel rounded-3xl p-4 border-2 border-amber-400/45 space-y-3.5">
+        <div class="flex items-center justify-between border-b border-white/10 pb-2">
+          <span class="text-xs font-bold text-amber-300">মোট পরিশোধযোগ্য:</span>
+          <span id="pay-total" class="text-lg font-extrabold text-amber-400">০ টাকা</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" id="btn-bkash" onclick="setMethod('bkash')" class="py-2.5 rounded-xl border-2 border-[#E2136E] bg-[#E2136E]/20 font-extrabold text-xs">বিকাশ (bKash)</button>
+          <button type="button" id="btn-nagad" onclick="setMethod('nagad')" class="py-2.5 rounded-xl border-2 border-white/10 bg-slate-900 font-extrabold text-xs text-slate-300">নগদ (Nagad)</button>
+        </div>
+        <div id="numbers-box" class="p-3 rounded-2xl bg-slate-950/80 border border-white/10 space-y-2"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div class="p-2.5 rounded-2xl bg-slate-950/75 border border-white/10">
+            <label class="block text-[11px] font-bold text-amber-300 mb-1">শেষের ৪ ডিজিট (অপশনাল)</label>
+            <input id="last4" type="text" maxlength="4" inputmode="numeric" placeholder="যেমন: 4589" class="w-full px-3 py-2 rounded-xl bg-black/50 border border-white/15 font-mono text-sm font-bold text-white">
+          </div>
+          <div class="p-2.5 rounded-2xl bg-slate-950/75 border border-white/10">
+            <label class="block text-[11px] font-bold text-amber-300 mb-1">স্ক্রিনশট (অপশনাল)</label>
+            <input id="proofFile" type="file" accept="image/*" onchange="readProof(event)" class="w-full text-[11px] text-slate-300">
+          </div>
+        </div>
+        <button type="button" onclick="submitOrder()" class="w-full py-3.5 rounded-2xl bg-emerald-400 text-slate-950 font-extrabold text-sm">সাবমিট করুন</button>
+      </div>
+    </section>
+    <section class="px-4 pt-5">
+      <div class="glass-panel rounded-3xl p-4 border border-white/10">
+        <h2 class="text-sm font-extrabold text-amber-300 mb-2.5">আপনার অর্ডার স্ট্যাটাস</h2>
+        <div id="orders-box" class="space-y-2.5 text-xs text-slate-300"></div>
+      </div>
+    </section>
+    <div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] p-3 glass-panel border-t border-amber-400/25">
+      <button id="buyBarBtn" type="button" onclick="openCheckout()" class="w-full py-3.5 px-4 rounded-2xl bg-slate-800 text-slate-300 font-extrabold text-sm flex items-center justify-between">
+        <span id="buyBarText">প্যাকেজ সিলেক্ট করুন</span>
+        <span>বাই করুন →</span>
+      </button>
+    </div>
+  </div>
+  <div id="adminPanel" class="hidden mobile-shell p-4 space-y-4">
+    <div class="flex items-center justify-between glass-panel p-3.5 rounded-2xl border border-amber-400/30">
+      <h1 class="font-extrabold text-sm text-amber-300">অ্যাডমিন প্যানেল (#/admin)</h1>
+      <button type="button" onclick="location.hash=''" class="px-3 py-1.5 rounded-xl bg-white/10 text-xs font-bold">ভিউয়ার পেজ</button>
+    </div>
+    <div id="adminGate" class="glass-panel p-5 rounded-3xl border border-white/10 space-y-3">
+      <p class="text-xs text-slate-300">অ্যাডমিন পিন দিন (ডিফল্ট: 1234)</p>
+      <input id="pinInput" type="password" placeholder="1234" class="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-white/15 font-mono text-center text-white">
+      <button type="button" onclick="loginAdmin()" class="w-full py-3 rounded-xl bg-amber-400 text-slate-950 font-extrabold text-xs">লগইন করুন</button>
+    </div>
+    <div id="adminBody" class="hidden space-y-4">
+      <div class="glass-panel p-4 rounded-3xl border border-white/10 space-y-2.5">
+        <h2 class="text-xs font-extrabold text-amber-300">বিকাশ ও নগদ নম্বর সেটিংস (১ বা ২টি)</h2>
+        <input id="b1" placeholder="বিকাশ নম্বর ১" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/15 font-mono text-xs">
+        <input id="b2" placeholder="বিকাশ নম্বর ২ (ঐচ্ছিক)" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/15 font-mono text-xs">
+        <input id="n1" placeholder="নগদ নম্বর ১" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/15 font-mono text-xs">
+        <input id="n2" placeholder="নগদ নম্বর ২ (ঐচ্ছিক)" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-white/15 font-mono text-xs">
+        <button type="button" onclick="saveNums()" class="w-full py-2.5 rounded-xl bg-amber-400 text-slate-950 font-extrabold text-xs">নম্বর সেভ করুন</button>
+      </div>
+      <div class="glass-panel p-4 rounded-3xl border border-white/10">
+        <h2 class="text-xs font-extrabold text-amber-300 mb-2.5">অর্ডার লিস্ট</h2>
+        <div id="adminOrders" class="space-y-2.5"></div>
+      </div>
+    </div>
+  </div>
+  <script>>
+    const SUPABASE_URL = 'https://vafsixbachxttooedmkm.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_LZpctGxAFr_D3p59vZ2V8A_wXNMn0c-';
+    const sb = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+    const PKGS = [
+      { id: 'pkg1', title: 'প্যাকেজ ১', desc: '৫ নীল + ৫ লাল + ৫ সোনালী = ১৫ কার্ড', oldPrice: '১৯,৯৯৯ ৳', price: 799 },
+      { id: 'pkg2', title: 'প্যাকেজ ২', desc: '১০ নীল + ১০ লাল + ১০ সোনালী = ৩০ কার্ড', oldPrice: '২৯,৯৯৯ ৳', price: 949 },
+      { id: 'pkg3', title: 'প্যাকেজ ৩', desc: '২০ নীল + ২০ লাল + ২০ সোনালী = ৬০ কার্ড', oldPrice: '৩৯,৯৯৯ ৳', price: 1799 }
+    ];
+    const qty = { pkg1: 0, pkg2: 0, pkg3: 0 };
+    let method = 'bkash';
+    let proofUrl = null;
+    const toBn = n => String(n).replace(/\d/g, d => '০১২৩৪৫৬৭৮৯'[d]);
+    function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.remove('hidden'); setTimeout(() => t.classList.add('hidden'), 2800); }
+    function getNums() { try { return JSON.parse(localStorage.getItem('mm_nums_live')) || { b1:'01712-345678', b2:'01912-345678', n1:'01812-345678', n2:'' }; } catch(_e) { return { b1:'01712-345678', b2:'', n1:'01812-345678', n2:'' }; } }
+    function getOrders() { try { return JSON.parse(localStorage.getItem('mm_orders_live')) || []; } catch(_e) { return []; } }
+    function saveOrders(list) { localStorage.setItem('mm_orders_live', JSON.stringify(list)); renderOrders(); renderAdminOrders(); }
+    function renderPkgs() {
+      const box = document.getElementById('pkg-list');
+      box.innerHTML = PKGS.map(p => {
+        const q = qty[p.id];
+        return `<div onclick="togglePkg('${p.id}')" class="pkg-card ${q>0?'selected':''} rounded-2xl p-3.5 cursor-pointer">
+          <div class="flex items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5">
+              <span class="w-6 h-6 rounded-lg border ${q>0?'bg-amber-400 border-amber-300 text-slate-950':'border-white/25'} flex items-center justify-center text-xs font-extrabold">${q>0?'✓':''}</span>
+              <div><div class="font-extrabold text-sm text-white">${p.title}</div><div class="text-[11px] text-slate-300">${p.desc}</div></div>
+            </div>
+            <div class="text-right"><div class="text-[11px] text-rose-400 line-through">${p.oldPrice}</div><div class="text-base font-extrabold text-amber-400">${toBn(p.price)} ৳</div></div>
+          </div>
+          <div onclick="event.stopPropagation()" class="flex items-center justify-between mt-3 pt-2.5 border-t border-white/10">
+            <span class="text-[11px] text-slate-300">পরিমাণ:</span>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="stepQty('${p.id}',-1)" class="w-7 h-7 rounded-lg bg-white/10 font-bold">-</button>
+              <span class="w-6 text-center font-mono font-bold text-amber-300">${toBn(q)}</span>
+              <button type="button" onclick="stepQty('${p.id}',1)" class="w-7 h-7 rounded-lg bg-amber-400/20 border border-amber-400/40 text-amber-300 font-bold">+</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+      let total = 0, count = 0;
+      PKGS.forEach(p => { total += qty[p.id] * p.price; count += qty[p.id]; });
+      const bar = document.getElementById('buyBarText');
+      const btn = document.getElementById('buyBarBtn');
+      if (count > 0) { bar.textContent = `${toBn(count)}টি প্যাকেজ • ${toBn(total)} টাকা`; btn.className = 'w-full py-3.5 px-4 rounded-2xl bg-amber-400 text-slate-950 font-extrabold text-sm flex items-center justify-between'; }
+      else { bar.textContent = 'প্যাকেজ সিলেক্ট করুন'; btn.className = 'w-full py-3.5 px-4 rounded-2xl bg-slate-800 text-slate-300 font-extrabold text-sm flex items-center justify-between'; }
+      document.getElementById('pay-total').textContent = `${toBn(total)} টাকা`;
+    }
+    function togglePkg(id) { qty[id] = qty[id] > 0 ? 0 : 1; renderPkgs(); }
+    function stepQty(id, d) { qty[id] = Math.max(0, Math.min(50, qty[id] + d)); renderPkgs(); }
+    function openCheckout() { const s = PKGS.reduce((a,p)=>a+qty[p.id],0); if(!s){ toast('আগে প্যাকেজ সিলেক্ট করুন!'); return; } document.getElementById('checkout-box').classList.remove('hidden'); setMethod(method); document.getElementById('checkout-box').scrollIntoView({behavior:'smooth'}); }
+    function setMethod(m) { method = m; const nums = getNums(); const list = m==='bkash'?[nums.b1,nums.b2].filter(Boolean):[nums.n1,nums.n2].filter(Boolean); document.getElementById('numbers-box').innerHTML = list.length ? list.map((x,i)=>`<div class="flex items-center justify-between text-xs"><span class="font-mono font-bold text-white">${x}</span><button type="button" onclick="copyNum('${x}')" class="px-2.5 py-1 rounded bg-amber-400 text-slate-950 font-bold">কপি ${i+1}</button></div>`).join('') : '<p class="text-xs text-rose-300">নম্বর সেট করা নেই</p>'; }
+    function copyNum(x) { const i = document.createElement('input'); i.value = x; document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove(); toast('নম্বর কপি হয়েছে: ' + x); }
+    function readProof(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = ev => { proofUrl = ev.target.result; toast('স্ক্রিনশট যুক্ত হয়েছে'); }; r.readAsDataURL(f); }
+    async function submitOrder() {
+      const selected = PKGS.filter(p => qty[p.id] > 0).map(p => ({ title: p.title, qty: qty[p.id], amount: qty[p.id]*p.price }));
+      if(!selected.length){ toast('প্যাকেজ সিলেক্ট করুন'); return; }
+      const total = selected.reduce((a,x)=>a+x.amount,0);
+      const last4 = document.getElementById('last4').value.trim() || 'দেওয়া হয়নি';
+      const order = { id: 'MM-' + Math.floor(1000+Math.random()*9000), summary: selected.map(x=>`${x.title}×${toBn(x.qty)}`).join(', '), total, method, last4, proofUrl, status: 'pending', time: new Date().toLocaleString('bn-BD') };
+      const list = getOrders(); list.unshift(order); saveOrders(list);
+      if(sb){ try{ await sb.from('orders').insert({ id: order.id, items: selected, package_name: order.summary, total_cards: selected.reduce((a,x)=>(a+(x.qty*15)),0), price_text: `${toBn(total)} টাকা`, price_num: total, method, last_digits: last4, screenshot_url: proofUrl, status: 'pending', created_at: order.time }); }catch(_e){} }
+      qty.pkg1=0; qty.pkg2=0; qty.pkg3=0; proofUrl=null; document.getElementById('last4').value=''; document.getElementById('proofFile').value=''; document.getElementById('checkout-box').classList.add('hidden'); renderPkgs(); toast('সাবমিট হয়েছে! অ্যাপ্রুভ হলে কার্ড কেনা হবে।');
+    }
+    function renderOrders() { const box = document.getElementById('orders-box'); const list = getOrders(); box.innerHTML = list.length ? list.map(o => `<div class="p-3 rounded-2xl bg-slate-950/75 border border-white/10"><div class="flex justify-between font-bold"><span>${o.id} • ${o.summary}</span><span class="${o.status==='approved'?'text-emerald-400':o.status==='rejected'?'text-rose-400':'text-amber-300'}">${o.status==='approved'?'কেনা সম্পন্ন ✓':o.status==='rejected'?'বাতিল':'পেন্ডিং'}</span></div><div class="text-[11px] text-slate-400 mt-1">${o.method.toUpperCase()} | ৪ ডিজিট: ${o.last4} | ${toBn(o.total)} ৳</div></div>`).join('') : '<p class="text-slate-400">এখনো কোনো অর্ডার নেই।</p>'; }
+    function route() { const isAdm = location.hash.toLowerCase().startsWith('#/admin'); document.getElementById('storefront').classList.toggle('hidden', isAdm); document.getElementById('adminPanel').classList.toggle('hidden', !isAdm); if(isAdm) syncAdminView(); }
+    function loginAdmin() { if(document.getElementById('pinInput').value.trim()==='1234'){ sessionStorage.setItem('mm_adm','1'); syncAdminView(); toast('লগইন সফল'); } else toast('ভুল পিন'); }
+    function syncAdminView() { const ok = sessionStorage.getItem('mm_adm')==='1'; document.getElementById('adminGate').classList.toggle('hidden', ok); document.getElementById('adminBody').classList.toggle('hidden', !ok); if(ok){ const n=getNums(); b1.value=n.b1||''; b2.value=n.b2||''; n1.value=n.n1||''; n2.value=n.n2||''; renderAdminOrders(); } }
+    async function saveNums() { const n={ b1:b1.value.trim(), b2:b2.value.trim(), n1:n1.value.trim(), n2:n2.value.trim() }; localStorage.setItem('mm_nums_live', JSON.stringify(n)); if(sb){ try{ await sb.from('site_settings').upsert({ id:1, bkash_1:n.b1, bkash_2:n.b2, nagad_1:n.n1, nagad_2:n.n2 }, { onConflict:'id' }); }catch(_e){} } toast('নম্বর সেভ হয়েছে'); }
+    function renderAdminOrders() { const box = document.getElementById('adminOrders'); if(!box) return; const list = getOrders(); box.innerHTML = list.length ? list.map(o => `<div class="p-3 rounded-2xl bg-slate-950/80 border border-white/10 space-y-2"><div class="flex justify-between text-xs font-bold"><span>${o.id} (${o.summary})</span><span class="text-amber-300">${toBn(o.total)} ৳</span></div><div class="text-[11px] text-slate-300">মাধ্যম: ${o.method} • শেষ ৪ ডিজিট: <strong class="text-amber-300">${o.last4}</strong> • স্ট্যাটাস: ${o.status}</div>${o.proofUrl?`<img src="${o.proofUrl}" class="max-h-28 rounded-xl border border-white/15">`:''}<div class="flex gap-2"><button type="button" onclick="setSt('${o.id}','approved')" class="flex-1 py-1.5 rounded-lg bg-emerald-400 text-slate-950 font-extrabold text-xs">অ্যাপ্রুভ</button><button type="button" onclick="setSt('${o.id}','rejected')" class="flex-1 py-1.5 rounded-lg bg-rose-500/25 text-rose-200 font-bold text-xs">বাতিল</button></div></div>`).join('') : '<p class="text-xs text-slate-400">অর্ডার নেই</p>'; }
+    async function setSt(id, st) { const list = getOrders().map(x => x.id===id ? {...x, status:st} : x); saveOrders(list); if(sb){ try{ await sb.from('orders').update({ status: st }).eq('id', id); }catch(_e){} } toast('স্ট্যাটাস আপডেট হয়েছে'); }
+    window.addEventListener('hashchange', route);
+    window.addEventListener('DOMContentLoaded', () => { renderPkgs(); renderOrders(); route(); });
+  </script>
+</body>
+</html>
